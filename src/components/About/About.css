@@ -1,0 +1,103 @@
+.about {
+  display: grid;
+  gap: var(--s-5);
+}
+
+.about__bio {
+  padding: var(--s-6);
+}
+
+.about__p {
+  color: var(--muted);
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+.about__p + .about__p {
+  margin-top: var(--s-4);
+}
+
+.about__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-4);
+}
+
+.about__stat {
+  padding: 20px;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.about__statValue {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  font-size: 34px;
+  color: var(--text-strong);
+}
+
+.about__statLabel {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.about__timeline {
+  padding: var(--s-6);
+}
+
+.about__timelineTitle {
+  font-size: 22px;
+  letter-spacing: -0.03em;
+  margin-bottom: 14px;
+}
+
+.about__timelineList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+
+.about__timelineItem {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.about__dot {
+  width: 10px;
+  height: 10px;
+  margin-top: 6px;
+  border-radius: 99px;
+  background: var(--accent);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12), 0 0 22px color-mix(in oklab, var(--accent), transparent 75%);
+}
+
+.about__timelineText {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+@media (min-width: 1024px) {
+  .about {
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: start;
+  }
+
+  .about__bio {
+    grid-column: 1 / 2;
+  }
+
+  .about__stats {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+  }
+
+  .about__timeline {
+    grid-column: 1 / 3;
+  }
+}
+

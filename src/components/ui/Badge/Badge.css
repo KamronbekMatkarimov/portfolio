@@ -1,0 +1,21 @@
+.ui-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-strong);
+  letter-spacing: 0.2px;
+}
+
+.ui-badge--accent {
+  background: color-mix(in oklab, var(--accent), transparent 86%);
+  border-color: color-mix(in oklab, var(--accent), transparent 70%);
+}
+
+.ui-badge--surface {
+  background: color-mix(in oklab, var(--surface), transparent 40%);
+}
+

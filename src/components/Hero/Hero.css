@@ -1,0 +1,139 @@
+.hero {
+  min-height: calc(100svh - 72px);
+  display: grid;
+  align-items: center;
+  position: relative;
+}
+
+.hero__inner {
+  position: relative;
+  display: grid;
+  padding-top: clamp(18px, 2.5vw, 28px);
+  padding-bottom: clamp(18px, 2.5vw, 28px);
+}
+
+.hero__orbs {
+  position: absolute;
+  inset: -80px -40px auto -40px;
+  height: 520px;
+  pointer-events: none;
+  filter: blur(36px);
+  opacity: 0.9;
+}
+
+.hero__orb {
+  position: absolute;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.16), transparent 60%),
+    radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--accent), transparent 35%), transparent 70%);
+  animation: floatSoft 7s ease-in-out infinite;
+}
+
+.hero__orb--a {
+  width: 360px;
+  height: 360px;
+  left: -40px;
+  top: -40px;
+  animation-duration: 8.5s;
+}
+
+.hero__orb--b {
+  width: 280px;
+  height: 280px;
+  left: 45%;
+  top: 40px;
+  animation-duration: 10s;
+}
+
+.hero__orb--c {
+  width: 320px;
+  height: 320px;
+  right: -40px;
+  top: 120px;
+  animation-duration: 9s;
+}
+
+.hero__content {
+  display: grid;
+  gap: var(--s-4);
+  z-index: 1;
+}
+
+.hero__badge {
+  width: fit-content;
+  animation: fadeUp 500ms ease both;
+}
+
+.hero__title {
+  font-size: clamp(3rem, 8vw, 7rem);
+  letter-spacing: -0.05em;
+  animation: fadeUp 520ms ease both;
+  animation-delay: 80ms;
+}
+
+.hero__role {
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+  animation: fadeUp 520ms ease both;
+  animation-delay: 140ms;
+}
+
+.hero__roleText {
+  display: inline-block;
+  padding-bottom: 6px;
+  border-bottom: 1px solid color-mix(in oklab, var(--accent), transparent 70%);
+}
+
+.hero__bio {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.6;
+  animation: fadeUp 520ms ease both;
+  animation-delay: 200ms;
+}
+
+.hero__cta {
+  display: flex;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+  animation: fadeUp 520ms ease both;
+  animation-delay: 260ms;
+}
+
+.hero__scroll {
+  margin-top: clamp(18px, 3vw, 28px);
+  justify-self: center;
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: var(--r-pill);
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.hero__scrollDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 99px;
+  background: var(--accent);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12), 0 0 24px color-mix(in oklab, var(--accent), transparent 70%);
+}
+
+.hero__scrollText {
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hero__scroll:hover {
+    color: var(--text-strong);
+    background: color-mix(in oklab, var(--surface), transparent 35%);
+  }
+}
+

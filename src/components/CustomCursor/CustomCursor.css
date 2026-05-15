@@ -1,0 +1,31 @@
+.custom-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  pointer-events: none;
+  transform: translate3d(-100px, -100px, 0);
+  translate: -50% -50%;
+  border: 1px solid color-mix(in oklab, var(--accent), transparent 45%);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 0 40px color-mix(in oklab, var(--accent), transparent 82%);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  transition: width 140ms ease, height 140ms ease, border-color 140ms ease, opacity 200ms ease;
+  opacity: 0.8;
+}
+
+.custom-cursor.is-active {
+  width: 54px;
+  height: 54px;
+  border-color: color-mix(in oklab, var(--accent), transparent 25%);
+  opacity: 1;
+}
+
+@media (pointer: coarse) {
+  .custom-cursor {
+    display: none;
+  }
+}
+

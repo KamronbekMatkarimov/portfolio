@@ -1,0 +1,100 @@
+.contact {
+  display: grid;
+  gap: var(--s-5);
+}
+
+.contact__title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+
+.contact__cards {
+  display: grid;
+  gap: var(--s-3);
+}
+
+.contact__cardInner {
+  padding: 18px 18px;
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.contact__cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.contact__cardTitle {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.contact__cardSub {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+}
+
+.contact__arrow {
+  color: color-mix(in oklab, var(--accent), white 10%);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .contact__card:hover .contact__cardInner {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-soft);
+    border-color: color-mix(in oklab, var(--accent), transparent 55%);
+  }
+}
+
+.contact__formCard {
+  padding: var(--s-6);
+}
+
+.contact__form {
+  display: grid;
+  gap: 14px;
+}
+
+.contact__field {
+  display: grid;
+  gap: 8px;
+}
+
+.contact__label {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.contact__input {
+  border-radius: var(--r-input);
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--surface), transparent 30%);
+  color: var(--text-strong);
+  padding: 12px 14px;
+  outline: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.contact__input:focus-visible {
+  border-color: color-mix(in oklab, var(--accent), transparent 55%);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent), transparent 84%);
+}
+
+.contact__textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+@media (min-width: 1024px) {
+  .contact {
+    grid-template-columns: 0.9fr 1.1fr;
+    align-items: start;
+  }
+}
+

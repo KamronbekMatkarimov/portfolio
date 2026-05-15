@@ -1,0 +1,19 @@
+.scrollProgress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 90;
+  background: transparent;
+}
+
+.scrollProgress__bar {
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  transform: scaleX(0);
+  background: var(--accent);
+  box-shadow: 0 0 16px color-mix(in oklab, var(--accent), transparent 72%);
+}
+

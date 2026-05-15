@@ -1,0 +1,71 @@
+{
+  "_instructions": "Редактируй этот файл — AI читает его при каждом ответе. Добавляй факты, проекты, FAQ. Поле _instructions в промпт не попадает. После сохранения перезапусти npm run dev (на Vercel — redeploy).",
+
+  "fullName": "Kamron Matkarimov",
+  "shortTitle": "Self-taught fullstack developer",
+  "age": 18,
+  "location": "Khiva, Khorezm, Uzbekistan",
+
+  "contacts": {
+    "github": "https://github.com/KamronbekMatkarimov",
+    "githubUsername": "KamronbekMatkarimov",
+    "telegram": "https://t.me/matkarimovff",
+    "telegramHandle": "@matkarimovff",
+    "email": "matkarimovkamron10@gmail.com"
+  },
+
+  "bio": "Self-taught developer from Khiva, Uzbekistan. Started at Mbos company in Urgench, learning from zero: HTML, Django, React, Docker. Focuses on clean code, scalable architecture, and production-ready products.",
+
+  "skills": {
+    "backend": ["Python", "Django", "Django REST Framework", "PostgreSQL", "Redis"],
+    "frontend": ["React", "JavaScript", "HTML5", "CSS3"],
+    "devops": ["Docker", "Git", "GitHub", "Vercel", "Linux"],
+    "learning": ["Next.js", "TypeScript"]
+  },
+
+  "experience": [
+    {
+      "company": "Mbos",
+      "location": "Urgench, Uzbekistan",
+      "role": "Developer (learning path from zero)",
+      "period": "Add your dates here, e.g. 2024 — present",
+      "details": "Learned web development from scratch: HTML → Django → React → Docker."
+    }
+  ],
+
+  "timeline": [
+    "Started learning programming",
+    "Joined Mbos (Urgench)",
+    "Built first real project",
+    "Learned Django",
+    "Learned React",
+    "Building fullstack apps"
+  ],
+
+  "stats": {
+    "yearsExperience": "1+",
+    "projectsBuilt": "5+",
+    "githubRepos": "10+"
+  },
+
+  "projectsHighlight": [
+    {
+      "name": "Example project",
+      "description": "Replace with your best project: what it does, stack, your role.",
+      "url": "https://github.com/KamronbekMatkarimov/your-repo"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Is Kamron available for work?",
+      "answer": "Yes, he is open to work and collaborations. Best contact: Telegram @matkarimovff or email."
+    },
+    {
+      "question": "What is his main stack?",
+      "answer": "Django + React + PostgreSQL + Docker."
+    }
+  ],
+
+  "extra": "Камрон начал свой первый путь в компании Mbos в Ургенче, где он начал изучать Django и React, Docker и другие технологии. ему сейчас 18 лет и он любит музыку кофе, он планирует развить свои способности программирование. "
+}

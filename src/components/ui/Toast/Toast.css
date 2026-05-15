@@ -1,0 +1,20 @@
+.ui-toastHost {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  display: grid;
+  gap: 10px;
+  z-index: 60;
+}
+
+.ui-toast {
+  border-radius: 16px;
+  padding: 12px 14px;
+  color: var(--text-strong);
+  background: color-mix(in oklab, var(--surface), transparent 12%);
+  border: 1px solid color-mix(in oklab, var(--accent), transparent 70%);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(10px);
+  animation: fadeUp 220ms ease both;
+}
+

@@ -1,0 +1,138 @@
+.projects__grid {
+  display: grid;
+  gap: var(--s-4);
+}
+
+.projects__card {
+  padding: var(--s-6);
+  will-change: transform;
+  transform-style: preserve-3d;
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.projects__cardTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.projects__name {
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.projects__lang {
+  flex: 0 0 auto;
+  font-size: 12px;
+}
+
+.projects__langDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 99px;
+  background: var(--langColor);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+.projects__desc {
+  margin-top: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+.projects__meta {
+  margin-top: 16px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.projects__metaKey {
+  color: var(--text-strong);
+}
+
+.projects__link {
+  margin-top: 18px;
+  display: inline-flex;
+  gap: 8px;
+  color: var(--text-strong);
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  background: transparent;
+  transition: border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+  width: fit-content;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .projects__card:hover {
+    border-color: color-mix(in oklab, var(--accent), transparent 55%);
+    box-shadow: var(--shadow-soft);
+  }
+  .projects__link:hover {
+    border-color: color-mix(in oklab, var(--accent), transparent 60%);
+    background: color-mix(in oklab, var(--surface), transparent 35%);
+    box-shadow: var(--shadow-soft);
+  }
+}
+
+.projects__state {
+  padding: var(--s-6);
+  display: grid;
+  gap: 12px;
+}
+
+.projects__stateTitle {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.projects__stateText {
+  color: var(--muted);
+  margin: 0;
+}
+
+.projects__skTitle {
+  height: 22px;
+  width: min(240px, 60%);
+}
+
+.projects__skBadge {
+  height: 28px;
+  width: 110px;
+}
+
+.projects__skDesc {
+  margin-top: 14px;
+  height: 16px;
+  width: 100%;
+}
+
+.projects__skDesc2 {
+  width: 72%;
+}
+
+.projects__skMeta {
+  height: 14px;
+  width: 120px;
+}
+
+@media (min-width: 768px) {
+  .projects__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .projects__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+

@@ -1,0 +1,8 @@
+.ui-card {
+  background: color-mix(in oklab, var(--surface), transparent 22%);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(10px);
+}
+

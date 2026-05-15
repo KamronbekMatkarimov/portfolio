@@ -1,0 +1,45 @@
+.skills {
+  display: grid;
+  gap: var(--s-4);
+}
+
+.skills__group {
+  padding: var(--s-6);
+}
+
+.skills__title {
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+
+.skills__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.skills__tag {
+  border-radius: var(--r-pill);
+  border: 1px solid color-mix(in oklab, var(--accent), transparent 75%);
+  background: color-mix(in oklab, var(--surface), transparent 30%);
+  padding: 10px 12px;
+  color: var(--text-strong);
+  font-size: 14px;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .skills__tag:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-soft);
+    border-color: color-mix(in oklab, var(--accent), transparent 55%);
+  }
+}
+
+@media (min-width: 1024px) {
+  .skills {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
