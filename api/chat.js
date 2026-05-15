@@ -12,8 +12,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const KNOWLEDGE_PATH = join(__dirname, "assistant-knowledge.json");
 
 const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta";
-/** ~1M input tokens; large output budget for chat replies. */
-const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash";
+/** Free tier: prefer flash-lite (flash often hits daily quota). */
+const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash-lite";
+const DEFAULT_GEMINI_FALLBACK = "gemini-2.5-flash-lite";
 
 const RATE = {
   windowMs: 60_000,
@@ -259,7 +260,27 @@ function getGeminiModel() {
 
 function getGeminiModelFallback() {
   const f = process.env.GEMINI_MODEL_FALLBACK;
-  return f ? String(f).trim() : "";
+  return f ? String(f).trim() : DEFAULT_GEMINI_FALLBACK;
+}
+
+function getModelChain() {
+  const models = [getGeminiModel(), getGeminiModelFallback(), DEFAULT_GEMINI_MODEL].filter(Boolean);
+  return [...new Set(models)];
+}
+
+function isQuotaError(res, data, rawText) {
+  if (res?.status === 429) return true;
+  const d = extractGeminiError(data, rawText).toLowerCase();
+  return d.includes("quota") || d.includes("rate limit") || d.includes("exceeded");
+}
+
+function friendlyQuotaReply(lang) {
+  const m = {
+    en: "AI is temporarily busy (free API limit). Wait about a minute and try again.",
+    ru: "AI временно недоступен (лимит бесплатного API). Подождите минуту и попробуйте снова.",
+    uz: "AI hozir band (bepul API limiti). Bir daqiqa kuting va qayta urinib ko'ring.",
+  };
+  return m[lang] || m.en;
 }
 
 function toGeminiContents(messages) {
@@ -357,36 +378,42 @@ Keep answers short, friendly, professional.
 `;
 
     const history = messages.slice(-12);
-    const primaryModel = getGeminiModel();
-    const fallbackModel = getGeminiModelFallback();
+    const modelChain = getModelChain();
 
-    let { res: aiRes, data, rawText } = await geminiGenerate(
-      primaryModel,
-      SYSTEM_PROMPT,
-      history,
-      apiKey,
-    );
-    let reply = extractGeminiReply(data);
+    let aiRes = null;
+    let data = null;
+    let rawText = "";
+    let reply = "";
+    let sawQuota = false;
 
-    if ((!aiRes.ok || !reply) && fallbackModel && fallbackModel !== primaryModel) {
-      const second = await geminiGenerate(fallbackModel, SYSTEM_PROMPT, history, apiKey);
-      aiRes = second.res;
-      data = second.data;
-      rawText = second.rawText;
+    for (const model of modelChain) {
+      const attempt = await geminiGenerate(model, SYSTEM_PROMPT, history, apiKey);
+      aiRes = attempt.res;
+      data = attempt.data;
+      rawText = attempt.rawText;
       reply = extractGeminiReply(data);
+
+      if (isQuotaError(aiRes, data, rawText)) {
+        sawQuota = true;
+        continue;
+      }
+      if (aiRes.ok && reply) break;
     }
 
-    if (!aiRes.ok) {
+    if (!aiRes?.ok || !reply) {
+      if (sawQuota) {
+        return json(res, 503, { reply: friendlyQuotaReply(lang) });
+      }
       const detail = extractGeminiError(data, rawText);
-      if (aiRes.status === 401 || aiRes.status === 403) {
+      if (aiRes?.status === 401 || aiRes?.status === 403) {
         return json(res, 502, {
           reply: detail
-            ? `Gemini ${aiRes.status}: ${detail}. Проверь GEMINI_API_KEY в .env (ключ из aistudio.google.com/apikey).`
+            ? `Gemini ${aiRes.status}: неверный API key. Проверь GEMINI_API_KEY.`
             : `Gemini ${aiRes.status}: неверный API key.`,
         });
       }
       return json(res, 502, {
-        reply: detail ? `Gemini error: ${detail}` : `Gemini request failed (HTTP ${aiRes.status}).`,
+        reply: detail ? `AI error. Try again later.` : `AI request failed.`,
       });
     }
 
