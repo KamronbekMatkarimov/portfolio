@@ -151,22 +151,53 @@ function isLikelySpam(text) {
   return false;
 }
 
+const UZ_LATIN_WORDS =
+  /\b(salom|rahmat|qanday|kerak|yordam|loyiha|aloqa|mening|uchun|qayerda|kim|nima|qilish|yozing|ayt|tilida|o'zbek|ozbek|siz|ular|bormi|qayer|bilasizmi|portfel|dasturchi|assalomu|vaalaykum|yaxshimisiz|qandaysiz|menga|sizga|haqida|bilan|uchun|emas|yoki|va|bu|shu|ham|kerakmi|javob|savol|iltimos|marhamat)\b/i;
+
 function detectLang(text) {
   const s = String(text || "").trim();
   if (!s) return "en";
 
-  if (/[ғқўҳ]/i.test(s) || /[ʻʼ’`]/.test(s) || /o['’]z/i.test(s)) return "uz";
-  if (/\b(salom|rahmat|qanday|kerak|yordam|loyiha|bog'lanish|aloqa|mening|uchun)\b/i.test(s)) return "uz";
+  if (/[ғқўҳ]/i.test(s)) return "uz";
+  if (/o[''`ʼ’]/.test(s) || /g[''`ʼ’]/.test(s)) return "uz";
+  if (UZ_LATIN_WORDS.test(s)) return "uz";
 
   if (/[а-яё]/i.test(s)) return "ru";
   return "en";
 }
 
-function pickLang(bodyLang, lastUserText) {
-  const fromMessage = detectLang(lastUserText);
-  if (String(lastUserText || "").trim().length >= 2) return fromMessage;
+function pickLang(bodyLang, messages) {
+  const userTexts = (Array.isArray(messages) ? messages : [])
+    .filter((m) => m?.role === "user" && typeof m.content === "string")
+    .map((m) => m.content)
+    .join("\n");
+
+  const lastUser = userTexts.split("\n").pop() || "";
+  const fromLast = detectLang(lastUser);
+  if (String(lastUser).trim().length >= 2) return fromLast;
+
+  const fromAll = detectLang(userTexts);
+  if (String(userTexts).trim().length >= 2) return fromAll;
+
   if (bodyLang === "ru" || bodyLang === "en" || bodyLang === "uz") return bodyLang;
   return "en";
+}
+
+const LANG_REPLY = {
+  en: "English",
+  ru: "Russian",
+  uz: "Uzbek in Latin script (o'zbek lotin yozuvi)",
+};
+
+function languageGuard(lang) {
+  const name = LANG_REPLY[lang] || LANG_REPLY.en;
+  if (lang === "uz") {
+    return `CRITICAL: Write the ENTIRE reply only in ${name}. Do not use English or Russian words. Use natural Uzbek (Latin): salom, rahmat, loyiha, aloqa, yordam, etc.`;
+  }
+  if (lang === "ru") {
+    return `CRITICAL: Write the ENTIRE reply only in ${name}. Do not switch to English or Uzbek.`;
+  }
+  return `CRITICAL: Write the ENTIRE reply only in ${name}. Do not switch to Russian or Uzbek unless quoting a proper noun.`;
 }
 
 function systemPrompt({ lang, reposSummary }) {
@@ -202,7 +233,7 @@ ${reposSummary || "- (Сейчас недоступно)"}
     uz: `Siz Kamron Matkarimov portfeli uchun AI yordamchisiz.
 
 Qoidalar:
-- FAQAT ${lang} tilida javob bering (foydalanuvchining oxirgi xabari tili).
+- FAQAT o'zbek tilida (lotin yozuvida) javob bering. Inglizcha yoki ruscha yozmang.
 - Javoblar qisqa, iliq, professional bo'lsin. Yengil hazil mumkin.
 - Kamron haqida uchinchi shaxsda gapiring ("Kamron", "u"), "men" emas.
 - Loyihalar uchun GitHub'ni, aloqa uchun Telegram/email'ni kerak bo'lsa eslatib o'ting.
@@ -341,7 +372,7 @@ export default async function handler(req, res) {
     const lastUser = [...messages].reverse().find((m) => m.role === "user")?.content || "";
     if (isLikelySpam(lastUser)) return json(res, 400, { reply: "Rejected (spam protection)" });
 
-    const lang = pickLang(body?.lang, lastUser);
+    const lang = pickLang(body?.lang, messages);
     const reposSummary = await fetchLatestRepos().catch(() => "");
     const knowledge = loadAssistantKnowledge();
     const knowledgeBlock = formatKnowledgeBlock(knowledge);
@@ -356,6 +387,8 @@ export default async function handler(req, res) {
     const SYSTEM_PROMPT = `${systemPrompt({ lang, reposSummary })}
 
 ${knowledgeBlock || "KNOWLEDGE BASE: (empty — edit api/assistant-knowledge.json)"}
+
+${languageGuard(lang)}
 
 Keep answers short, friendly, professional.
 `;

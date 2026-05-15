@@ -37,5 +37,9 @@ npm run dev
 
 ## Deploy (Vercel)
 
+Production URL: **https://kamron.uz** (also `matkarimov.uz`, `matkarimovff.uz`).
+
+If a custom domain does not open yet, add an **A** record at your registrar: `@` → `76.76.21.21` (or point nameservers to Vercel: `ns1.vercel-dns.com`, `ns2.vercel-dns.com`).
+
 - Vercel will detect Vite automatically.
 - Serverless function lives in `api/chat.js` and is available at `/api/chat`.

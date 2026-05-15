@@ -1,12 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./Navbar.css";
-import { Button } from "../ui/Button/Button";
 
 const THEMES = [
-  { id: "dark", label: "Dark" },
-  { id: "light", label: "Light" },
-  { id: "ocean", label: "Ocean" },
-  { id: "forest", label: "Forest" },
+  { id: "dark", label: "Dark", short: "D" },
+  { id: "light", label: "Light", short: "L" },
+  { id: "ocean", label: "Ocean", short: "O" },
+  { id: "forest", label: "Forest", short: "F" },
 ];
 
 const LANGS = [
@@ -22,9 +21,7 @@ function scrollToId(id) {
 }
 
 export function Navbar({ t, lang, onLangChange, theme, onThemeChange }) {
-  const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const overlayRef = useRef(null);
 
   const links = useMemo(
     () => [
@@ -43,15 +40,6 @@ export function Navbar({ t, lang, onLangChange, theme, onThemeChange }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKeyDown = (e) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open]);
-
   return (
     <header className={["nav", scrolled ? "nav--scrolled" : ""].filter(Boolean).join(" ")}>
       <div className="container nav__inner">
@@ -68,15 +56,14 @@ export function Navbar({ t, lang, onLangChange, theme, onThemeChange }) {
           ))}
         </nav>
 
-        <div className="nav__right">
-          <div className="nav__seg" role="group" aria-label="Language">
+        <div className="nav__controls">
+          <div className="nav__group" role="group" aria-label="Language">
             {LANGS.map((l) => (
               <button
                 key={l.id}
                 type="button"
-                className={["nav__segBtn", l.id === lang ? "is-active" : ""]
-                  .filter(Boolean)
-                  .join(" ")}
+                className={["nav__pill", l.id === lang ? "is-active" : ""].filter(Boolean).join(" ")}
+                aria-pressed={l.id === lang}
                 onClick={() => onLangChange(l.id)}
               >
                 {l.label}
@@ -84,100 +71,27 @@ export function Navbar({ t, lang, onLangChange, theme, onThemeChange }) {
             ))}
           </div>
 
-          <div className="nav__seg" role="group" aria-label="Theme">
+          <div className="nav__group" role="group" aria-label="Theme">
             {THEMES.map((th) => (
               <button
                 key={th.id}
                 type="button"
-                className={["nav__segBtn", th.id === theme ? "is-active" : ""]
+                className={["nav__pill nav__pill--theme", th.id === theme ? "is-active" : ""]
                   .filter(Boolean)
                   .join(" ")}
+                aria-pressed={th.id === theme}
+                title={th.label}
                 onClick={() => onThemeChange(th.id)}
               >
-                {th.label}
+                <span className="nav__pillFull">{th.label}</span>
+                <span className="nav__pillShort" aria-hidden="true">
+                  {th.short}
+                </span>
               </button>
             ))}
           </div>
-
         </div>
       </div>
-
-      {open ? (
-        <div
-          ref={overlayRef}
-          className="navOverlay"
-          role="dialog"
-          aria-modal="true"
-          onClick={(e) => {
-            if (e.target === overlayRef.current) setOpen(false);
-          }}
-        >
-          <div className="navOverlay__panel" onClick={(e) => e.stopPropagation()}>
-            <div className="navOverlay__top">
-              <span className="navOverlay__mark">K.</span>
-              <Button variant="ghost" onClick={() => setOpen(false)} aria-label="Close menu">
-                Close
-              </Button>
-            </div>
-
-            <div className="navOverlay__links" role="navigation" aria-label="Mobile">
-              {links.map((l, i) => (
-                <button
-                  key={l.id}
-                  type="button"
-                  className="navOverlay__link"
-                  style={{ animationDelay: `${60 + i * 60}ms` }}
-                  onClick={() => {
-                    setOpen(false);
-                    scrollToId(l.id);
-                  }}
-                >
-                  {l.label}
-                </button>
-              ))}
-            </div>
-
-            <div className="navOverlay__bottom">
-              <div className="navOverlay__row">
-                <span className="navOverlay__label">Language</span>
-                <div className="nav__seg" role="group" aria-label="Language">
-                  {LANGS.map((l) => (
-                    <button
-                      key={l.id}
-                      type="button"
-                      className={["nav__segBtn", l.id === lang ? "is-active" : ""]
-                        .filter(Boolean)
-                        .join(" ")}
-                      onClick={() => onLangChange(l.id)}
-                    >
-                      {l.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="navOverlay__row">
-                <span className="navOverlay__label">Theme</span>
-                <div className="nav__seg" role="group" aria-label="Theme">
-                  {THEMES.map((th) => (
-                    <button
-                      key={th.id}
-                      type="button"
-                      className={["nav__segBtn", th.id === theme ? "is-active" : ""]
-                        .filter(Boolean)
-                        .join(" ")}
-                      onClick={() => onThemeChange(th.id)}
-                    >
-                      {th.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : null}
     </header>
   );
 }
-
