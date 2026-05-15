@@ -12,6 +12,11 @@ const LINKS = [
     href: "https://github.com/KamronbekMatkarimov",
   },
   { title: "Telegram", subtitle: "@matkarimovff", href: "https://t.me/matkarimovff" },
+  {
+    title: "Instagram",
+    subtitle: "@matkarimovff",
+    href: "https://www.instagram.com/matkarimovff/",
+  },
   { title: "Email", subtitle: "matkarimovkamron10@gmail.com", href: "mailto:matkarimovkamron10@gmail.com" },
 ];
 

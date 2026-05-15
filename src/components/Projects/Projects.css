@@ -23,17 +23,25 @@
   margin: 0;
 }
 
-.projects__lang {
+.projects__status {
   flex: 0 0 auto;
   font-size: 12px;
 }
 
-.projects__langDot {
-  width: 10px;
-  height: 10px;
-  border-radius: 99px;
-  background: var(--langColor);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+.projects__tags {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.projects__tag {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--surface), transparent 30%);
+  color: var(--muted);
 }
 
 .projects__desc {
@@ -54,6 +62,11 @@
 
 .projects__metaKey {
   color: var(--text-strong);
+}
+
+.projects__link--muted {
+  cursor: default;
+  color: var(--muted);
 }
 
 .projects__link {
