@@ -1,6 +1,6 @@
 /**
- * Google AI Studio (Gemini) — generateContent API.
- * @see https://ai.google.dev/gemini-api/docs
+ * OpenRouter — OpenAI-compatible chat API.
+ * @see https://openrouter.ai/docs
  *
  * Custom facts about Kamron: edit api/assistant-knowledge.json
  */
@@ -11,10 +11,11 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const KNOWLEDGE_PATH = join(__dirname, "assistant-knowledge.json");
 
-const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta";
-/** Free tier: prefer flash-lite (flash often hits daily quota). */
-const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash-lite";
-const DEFAULT_GEMINI_FALLBACK = "gemini-2.5-flash-lite";
+const OPENROUTER_CHAT_URL = "https://openrouter.ai/api/v1/chat/completions";
+const DEFAULT_OPENROUTER_MODEL = "nousresearch/hermes-3-llama-3.1-405b:free";
+const DEFAULT_OPENROUTER_FALLBACK = "meta-llama/llama-3.2-3b-instruct:free";
+/** Auto-picks an available free model when specific :free models are rate-limited. */
+const OPENROUTER_AUTO_FALLBACK = "openrouter/free";
 
 const RATE = {
   windowMs: 60_000,
@@ -47,7 +48,7 @@ function formatKnowledgeBlock(data) {
   if (!data || typeof data !== "object") return "";
 
   const lines = [
-    "KNOWLEDGE BASE (authoritative — answer about Kamron ONLY from here + GitHub repos below):",
+    "KNOWLEDGE BASE (authoritative — answer about Kamron ONLY from here):",
     "",
   ];
 
@@ -245,52 +246,47 @@ function normalizeSecret(value) {
   return s;
 }
 
-function getGeminiApiKey() {
-  const t =
-    process.env.GEMINI_API_KEY ||
-    process.env.GOOGLE_AI_API_KEY ||
-    process.env.GOOGLE_API_KEY ||
-    "";
+function getOpenRouterApiKey() {
+  const t = process.env.OPENROUTER_API_KEY || process.env.OPENROUTER_KEY || "";
   return normalizeSecret(t);
 }
 
-function getGeminiModel() {
-  return (process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL).trim();
+function getOpenRouterModel() {
+  return (process.env.OPENROUTER_MODEL || DEFAULT_OPENROUTER_MODEL).trim();
 }
 
-function getGeminiModelFallback() {
-  const f = process.env.GEMINI_MODEL_FALLBACK;
-  return f ? String(f).trim() : DEFAULT_GEMINI_FALLBACK;
+function getOpenRouterModelFallback() {
+  const f = process.env.OPENROUTER_MODEL_FALLBACK;
+  return f ? String(f).trim() : DEFAULT_OPENROUTER_FALLBACK;
 }
 
 function getModelChain() {
-  const models = [getGeminiModel(), getGeminiModelFallback(), DEFAULT_GEMINI_MODEL].filter(Boolean);
+  const models = [
+    getOpenRouterModel(),
+    getOpenRouterModelFallback(),
+    OPENROUTER_AUTO_FALLBACK,
+    DEFAULT_OPENROUTER_MODEL,
+    DEFAULT_OPENROUTER_FALLBACK,
+  ].filter(Boolean);
   return [...new Set(models)];
 }
 
-function isQuotaError(res, data, rawText) {
+function isRateLimitError(res, data, rawText) {
   if (res?.status === 429) return true;
-  const d = extractGeminiError(data, rawText).toLowerCase();
-  return d.includes("quota") || d.includes("rate limit") || d.includes("exceeded");
+  const d = extractOpenRouterError(data, rawText).toLowerCase();
+  return d.includes("quota") || d.includes("rate limit") || d.includes("exceeded") || d.includes("limit");
 }
 
-function friendlyQuotaReply(lang) {
+function friendlyRateLimitReply(lang) {
   const m = {
-    en: "AI is temporarily busy (free API limit). Wait about a minute and try again.",
-    ru: "AI временно недоступен (лимит бесплатного API). Подождите минуту и попробуйте снова.",
-    uz: "AI hozir band (bepul API limiti). Bir daqiqa kuting va qayta urinib ko'ring.",
+    en: "AI is temporarily busy (rate limit). Wait a minute and try again.",
+    ru: "AI временно перегружен (лимит запросов). Подождите минуту и попробуйте снова.",
+    uz: "AI hozir band (limit). Bir daqiqa kuting va qayta urinib ko'ring.",
   };
   return m[lang] || m.en;
 }
 
-function toGeminiContents(messages) {
-  return messages.map((m) => ({
-    role: m.role === "assistant" ? "model" : "user",
-    parts: [{ text: m.content }],
-  }));
-}
-
-function extractGeminiError(data, rawText = "") {
+function extractOpenRouterError(data, rawText = "") {
   if (typeof data?.error?.message === "string") return data.error.message.slice(0, 400);
   if (typeof data?.message === "string") return data.message.slice(0, 400);
   const t = String(rawText || "").trim();
@@ -298,31 +294,42 @@ function extractGeminiError(data, rawText = "") {
   return "";
 }
 
-function extractGeminiReply(data) {
-  const parts = data?.candidates?.[0]?.content?.parts;
-  if (!Array.isArray(parts)) return "";
-  return parts
-    .map((p) => (typeof p?.text === "string" ? p.text : ""))
-    .join("")
-    .trim();
+function extractOpenRouterReply(data) {
+  const msg = data?.choices?.[0]?.message;
+  if (!msg) return "";
+
+  const c = msg.content;
+  if (typeof c === "string" && c.trim()) return c.trim();
+  if (Array.isArray(c)) {
+    const joined = c
+      .map((part) => (typeof part === "string" ? part : part?.text || ""))
+      .join("")
+      .trim();
+    if (joined) return joined;
+  }
+
+  return "";
 }
 
-async function geminiGenerate(model, systemText, historyMessages, apiKey) {
-  const url = `${GEMINI_API_BASE}/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
-  const body = JSON.stringify({
-    systemInstruction: { parts: [{ text: systemText }] },
-    contents: toGeminiContents(historyMessages),
-    generationConfig: {
-      temperature: 0.65,
-      topP: 0.92,
-      maxOutputTokens: 2048,
-    },
-  });
+async function openRouterChat(model, systemText, historyMessages, apiKey) {
+  const siteUrl = process.env.OPENROUTER_SITE_URL?.trim() || "https://matkarimovff.vercel.app";
+  const messages = [{ role: "system", content: systemText }, ...historyMessages];
 
-  const res = await fetch(url, {
+  const res = await fetch(OPENROUTER_CHAT_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body,
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+      "HTTP-Referer": siteUrl,
+      "X-Title": "Kamron Matkarimov Portfolio",
+    },
+    body: JSON.stringify({
+      model,
+      messages,
+      max_tokens: 1024,
+      temperature: 0.65,
+      top_p: 0.92,
+    }),
   });
 
   const rawText = await res.text().catch(() => "");
@@ -361,10 +368,10 @@ export default async function handler(req, res) {
     const knowledge = loadAssistantKnowledge();
     const knowledgeBlock = formatKnowledgeBlock(knowledge);
 
-    const apiKey = getGeminiApiKey();
+    const apiKey = getOpenRouterApiKey();
     if (!apiKey) {
       return json(res, 500, {
-        reply: "Server not configured. Set GEMINI_API_KEY in .env (Google AI Studio API key).",
+        reply: "Server not configured. Set OPENROUTER_API_KEY in .env (https://openrouter.ai/keys).",
       });
     }
 
@@ -387,13 +394,13 @@ Keep answers short, friendly, professional.
     let sawQuota = false;
 
     for (const model of modelChain) {
-      const attempt = await geminiGenerate(model, SYSTEM_PROMPT, history, apiKey);
+      const attempt = await openRouterChat(model, SYSTEM_PROMPT, history, apiKey);
       aiRes = attempt.res;
       data = attempt.data;
       rawText = attempt.rawText;
-      reply = extractGeminiReply(data);
+      reply = extractOpenRouterReply(data);
 
-      if (isQuotaError(aiRes, data, rawText)) {
+      if (isRateLimitError(aiRes, data, rawText)) {
         sawQuota = true;
         continue;
       }
@@ -402,23 +409,23 @@ Keep answers short, friendly, professional.
 
     if (!aiRes?.ok || !reply) {
       if (sawQuota) {
-        return json(res, 503, { reply: friendlyQuotaReply(lang) });
+        return json(res, 503, { reply: friendlyRateLimitReply(lang) });
       }
-      const detail = extractGeminiError(data, rawText);
+      const detail = extractOpenRouterError(data, rawText);
       if (aiRes?.status === 401 || aiRes?.status === 403) {
         return json(res, 502, {
           reply: detail
-            ? `Gemini ${aiRes.status}: неверный API key. Проверь GEMINI_API_KEY.`
-            : `Gemini ${aiRes.status}: неверный API key.`,
+            ? `OpenRouter ${aiRes.status}: неверный API key. Проверь OPENROUTER_API_KEY.`
+            : `OpenRouter ${aiRes.status}: неверный API key.`,
         });
       }
       return json(res, 502, {
-        reply: detail ? `AI error. Try again later.` : `AI request failed.`,
+        reply: detail ? `AI error: ${detail}` : `AI request failed.`,
       });
     }
 
     if (!reply) {
-      const detail = extractGeminiError(data, rawText);
+      const detail = extractOpenRouterError(data, rawText);
       return json(res, 500, {
         reply: detail ? `No reply from model: ${detail}` : "No reply from model.",
       });

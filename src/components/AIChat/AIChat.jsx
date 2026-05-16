@@ -146,7 +146,7 @@ export default function AIChat({ t, lang }) {
           <div className="chatTop">
             <div className="chatTop__left">
               <div className="chatTop__title">{t.chat.title}</div>
-              <div className="chatTop__sub">Gemini</div>
+              <div className="chatTop__sub">OpenRouter</div>
             </div>
             <div className="chatTop__right">
               <Button variant="subtle" onClick={onClear} disabled={loading}>

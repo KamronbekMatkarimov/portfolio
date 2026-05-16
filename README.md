@@ -4,7 +4,7 @@ Production-grade personal portfolio built with:
 
 - React 18 + Vite
 - Pure CSS (no Tailwind / no UI libraries)
-- Vercel Serverless Functions (`/api/chat` → Google Gemini / AI Studio)
+- Vercel Serverless Functions (`/api/chat` → OpenRouter)
 - GitHub REST API (token optional)
 - Lazy-loaded AI chat
 
@@ -20,9 +20,9 @@ npm install
 
 Copy `.env.example` to `.env` and set values:
 
-- `GEMINI_API_KEY` — API key from [Google AI Studio](https://aistudio.google.com/apikey)
-- `GEMINI_MODEL` (optional; default `gemini-2.5-flash` — ~1M token context)
-- `GEMINI_MODEL_FALLBACK` (optional; e.g. `gemini-2.5-flash-lite`)
+- `OPENROUTER_API_KEY` — API key from [OpenRouter](https://openrouter.ai/keys)
+- `OPENROUTER_MODEL` (optional; default `nousresearch/hermes-3-llama-3.1-405b:free`)
+- `OPENROUTER_MODEL_FALLBACK` (optional; e.g. `meta-llama/llama-3.2-3b-instruct:free`)
 - **`api/assistant-knowledge.json`** — facts about you for the AI (bio, skills, FAQ, projects). Edit this file so chat answers accurately.
 - `VITE_GITHUB_TOKEN` (GitHub API: projects list + optional repo context for AI)
 - `VITE_GITHUB_USERNAME`
