@@ -75,5 +75,29 @@
     }
   ],
 
-  "extra": "Kamron is 18, from Khiva. He plans to grow as a developer. Contact prefers Telegram or Instagram @matkarimovff."
+  "extra": "Kamron is 18, from Khiva. He plans to grow as a developer. Contact prefers Telegram or Instagram @matkarimovff.",
+
+  "localized": {
+    "uz": {
+      "greeting": "Salom! Men Kamron Matkarimov portfelidagi AI yordamchiman. Savolingiz bo'lsa, yozing — tajribasi, loyihalari yoki aloqa haqida yordam beraman. Telegram va Instagram: @matkarimovff.",
+      "bio": "Kamron Matkarimov — Xivadan (Xorazm) o'z-o'zidan o'rganilgan fullstack dasturchi, 18 yosh. Asosiy stack: Django, React, PostgreSQL, Docker. Mbos kompaniyasida (Urganch) noldan boshlab o'rgangan: HTML, Django, React, Docker.",
+      "skillsSummary": "Backend: Python, Django, DRF, PostgreSQL, Redis. Frontend: React, JavaScript. Devops: Docker, Git, Vercel.",
+      "availability": "Ha — ish va hamkorlik uchun Telegram @matkarimovff yoki Instagram @matkarimovff orqali yozish mumkin.",
+      "projectsSummary": "Shaxsiy portfel (React, mavzular, i18n, AI chat), Django REST + React platformalar, Docker bilan API va deploy."
+    },
+    "ru": {
+      "greeting": "Здравствуйте! Я AI-ассистент портфолио Камрона Маткаримова. Спросите о его опыте, проектах или контактах — Telegram и Instagram: @matkarimovff.",
+      "bio": "Камрон Маткаримов — 18 лет, самоучка fullstack-разработчик из Хивы (Хорезм). Основной стек: Django, React, PostgreSQL, Docker. Работает в Mbos (Ургенч), учился с нуля.",
+      "skillsSummary": "Backend: Python, Django, DRF, PostgreSQL. Frontend: React. DevOps: Docker, Vercel, Git.",
+      "availability": "Да — для работы и сотрудничества: Telegram @matkarimovff или Instagram @matkarimovff.",
+      "projectsSummary": "Портфолио-сайт, fullstack на Django REST + React, контейнеризация и деплой."
+    },
+    "en": {
+      "greeting": "Hello! I'm the AI assistant for Kamron Matkarimov's portfolio. Ask about his experience, projects, or how to reach him — Telegram & Instagram @matkarimovff.",
+      "bio": "Kamron Matkarimov is an 18-year-old self-taught fullstack developer from Khiva, Uzbekistan. Stack: Django, React, PostgreSQL, Docker. Works at Mbos in Urgench.",
+      "skillsSummary": "Backend: Python, Django, DRF, PostgreSQL. Frontend: React. DevOps: Docker, Vercel.",
+      "availability": "Yes — reach out on Telegram @matkarimovff or Instagram @matkarimovff.",
+      "projectsSummary": "This portfolio site, Django REST + React apps, Dockerized APIs and deployment."
+    }
+  }
 }

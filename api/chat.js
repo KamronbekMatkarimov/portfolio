@@ -44,8 +44,37 @@ function formatList(items) {
   return items.map((x) => `- ${x}`).join("\n");
 }
 
-function formatKnowledgeBlock(data) {
+function formatKnowledgeBlock(data, lang = "en") {
   if (!data || typeof data !== "object") return "";
+
+  const loc = data.localized?.[lang];
+  if (loc && typeof loc === "object") {
+    const lines = [
+      lang === "uz"
+        ? "BILIM BAZASI (faqat shu matndan foydalaning — o'zingiz tarjima qilmang, yangi so'z o'ylab topmang):"
+        : lang === "ru"
+          ? "БАЗА ЗНАНИЙ (отвечай только по этому тексту, не выдумывай слова):"
+          : "KNOWLEDGE BASE (authoritative — answer ONLY from here, do not invent facts):",
+      "",
+    ];
+    if (data.fullName) lines.push(`Name: ${data.fullName}`);
+    if (loc.bio) lines.push("", lang === "uz" ? "Bio:" : lang === "ru" ? "О нём:" : "Bio:", loc.bio);
+    if (loc.skillsSummary) lines.push("", lang === "uz" ? "Ko'nikmalar:" : lang === "ru" ? "Навыки:" : "Skills:", loc.skillsSummary);
+    if (loc.projectsSummary) {
+      lines.push("", lang === "uz" ? "Loyihalar:" : lang === "ru" ? "Проекты:" : "Projects:", loc.projectsSummary);
+    }
+    if (loc.availability) {
+      lines.push("", lang === "uz" ? "Ishga ochiqmi:" : lang === "ru" ? "Доступен:" : "Available:", loc.availability);
+    }
+    if (data.contacts && typeof data.contacts === "object") {
+      lines.push("", lang === "uz" ? "Aloqa:" : lang === "ru" ? "Контакты:" : "Contacts:");
+      for (const [k, v] of Object.entries(data.contacts)) {
+        if (v) lines.push(`- ${k}: ${v}`);
+      }
+    }
+    if (loc.greeting) lines.push("", "GREETING_TEMPLATE (for hi/salom only):", loc.greeting);
+    return lines.join("\n");
+  }
 
   const lines = [
     "KNOWLEDGE BASE (authoritative — answer about Kamron ONLY from here):",
@@ -205,15 +234,68 @@ function pickLang(_bodyLang, messages) {
   return "en";
 }
 
+const GREETING_ONLY =
+  /^(salom|assalomu\s*alaykum|va\s*alaykum|rahmat|qalay|qaley|qanday|qandaysiz|yaxshimisiz|hayr|hello|hi|hey|привет|здравствуйте|здравствуй|добрый\s*(день|вечер|утро))[\s!.?]*$/i;
+
+function isGreetingOnly(text) {
+  const s = String(text || "").trim();
+  if (!s || s.length > 40) return false;
+  return GREETING_ONLY.test(s);
+}
+
+function getCannedGreeting(lang) {
+  const data = loadAssistantKnowledge();
+  const g = data?.localized?.[lang]?.greeting;
+  if (g) return g;
+  const fallback = {
+    uz: "Salom! Men Kamron Matkarimov portfelidagi AI yordamchiman. Savolingiz bo'lsa, yozing — Telegram va Instagram: @matkarimovff.",
+    ru: "Здравствуйте! Я AI-ассистент портфолио Камрона Маткаримова. Спросите о нём — Telegram и Instagram: @matkarimovff.",
+    en: "Hello! I'm Kamron's portfolio AI assistant. Ask about his work or contact @matkarimovff on Telegram or Instagram.",
+  };
+  return fallback[lang] || fallback.en;
+}
+
+function getQualityFallback(lang) {
+  const loc = loadAssistantKnowledge()?.localized?.[lang];
+  if (!loc) return getCannedGreeting(lang);
+  if (lang === "uz") {
+    return `Kamron Matkarimov — Xivadan fullstack dasturchi (Django, React, PostgreSQL, Docker). ${loc.availability || "Aloqa: @matkarimovff Telegram va Instagram."}`;
+  }
+  if (lang === "ru") {
+    return `${loc.bio || ""} ${loc.availability || "Контакт: @matkarimovff."}`.trim();
+  }
+  return `${loc.bio || ""} ${loc.availability || "Contact @matkarimovff."}`.trim();
+}
+
+const UZ_GARBAGE =
+  /\b(bost|neqchiq|qizbandi|dakash|kabulatoyon|kabulatay|kulish|halse|yakadam|ochiq\s+kulish|qayyum|qaboolatoyon)\b/i;
+
+function replyLooksGarbled(reply, lang) {
+  const r = String(reply || "").trim();
+  if (!r) return true;
+
+  if (lang === "uz") {
+    if (UZ_GARBAGE.test(r)) return true;
+    const lines = r.split("\n").filter((l) => l.trim());
+    if (lines.length >= 5 && lines.filter((l) => /^[A-Za-z' ]+:/.test(l.trim())).length >= 2) return true;
+  }
+
+  if (lang === "ru") {
+    if (/\b(bost|neqchiq|salom,?\s+kamron\s+matkarimov\s+bost)\b/i.test(r)) return true;
+  }
+
+  return false;
+}
+
 function languageGuard(lang) {
   if (lang === "uz") {
     return `=== TIL: FAQAT O'ZBEK (LOTIN) ===
 Javobingiz TO'LIQ o'zbek tilida, lotin harflarida bo'lsin.
-YASAK: rus tili (kirill yoki lotin), ingliz tili, qirg'iz tili, qozoq tili, turk tili.
-YASAK: kirill alifbosi (а, с, ү, ө va h.k.) — faqat a-z, o', g', sh, ch.
-To'g'ri: "Salom!", "Qalaysiz?", "Kamron dasturchi — u Xorazmdan."
-Noto'g'ri: "Сизге жардам" (qirg'iz), "Как дела" (rus), "How are you" (ingliz).
-Har bir gap o'zbekcha bo'lsin.`;
+BILIM BAZASidagi so'zlarni AYNAN shunday ishlating — o'zingiz tarjima qilmang, yangi so'z o'ylab topmang.
+YASAK: rus, ingliz, qirg'iz, qozoq; kirill harflar; ro'yxat/bullet spam; "Ochiq:", "Dakash" kabi g'alati so'zlar.
+Salom uchun: GREETING_TEMPLATE matnini qisqartirib, tabiiy qilib ishlating (1-3 gap).
+To'g'ri: "Salom! Men portfel yordamchisiman. Kamron — Xivadan fullstack dasturchi (Django, React)."
+Noto'g'ri: "bost", "neqchiq", "Ochiq kulish", "qizbandi".`;
   }
   if (lang === "ru") {
     return `=== ЯЗЫК: ТОЛЬКО РУССКИЙ ===
@@ -291,10 +373,11 @@ Rules:
 
 Qoidalar:
 - FAQAT o'zbek tilida (lotin yozuvi) javob bering — har doim.
-- Javoblar qisqa, iliq, professional bo'lsin (2-5 gap).
-- Kamron haqida uchinchi shaxsda gapiring ("Kamron", "u"), "men" emas.
-- Aloqa: Telegram @matkarimovff, Instagram @matkarimovff, email.
-- Kamron va loyihalar haqida FAQAT KNOWLEDGE BASE dan foydalaning.
+- Javoblar qisqa, iliq, professional bo'lsin (2-4 gap, ro'yxat kerak bo'lmasa yozmang).
+- Kamron haqida uchinchi shaxsda gapiring ("Kamron", "u"). O'zingizni "men yordamchiman" deb ayting.
+- Aloqa: Telegram @matkarimovff, Instagram @matkarimovff.
+- FAQAT BILIM BAZASidagi matndan foydalaning — inglizcha matnni o'zingiz tarjima qilmang.
+- Namuna (salom): "Salom! Men portfel yordamchisiman. Kamron haqida savolingiz bo'lsa, yozing."
 `,
   };
   return base[lang] || base.en;
@@ -437,7 +520,11 @@ export default async function handler(req, res) {
 
     const lang = pickLang(body?.lang, messages);
     const knowledge = loadAssistantKnowledge();
-    const knowledgeBlock = formatKnowledgeBlock(knowledge);
+    const knowledgeBlock = formatKnowledgeBlock(knowledge, lang);
+
+    if (isGreetingOnly(lastUser)) {
+      return json(res, 200, { reply: getCannedGreeting(lang) });
+    }
 
     const apiKey = getOpenRouterApiKey();
     if (!apiKey) {
@@ -488,14 +575,24 @@ Keep answers short, friendly, professional.
       reply = first.reply;
     }
 
-    if (reply && replyLooksWrongLanguage(reply, lang)) {
+    if (reply && (replyLooksWrongLanguage(reply, lang) || replyLooksGarbled(reply, lang))) {
       const repair = await runChat(languageRepairPrompt(lang, lastUser));
-      if (repair?.reply && !replyLooksWrongLanguage(repair.reply, lang)) {
+      if (
+        repair?.reply &&
+        !replyLooksWrongLanguage(repair.reply, lang) &&
+        !replyLooksGarbled(repair.reply, lang)
+      ) {
         aiRes = repair.res;
         data = repair.data;
         rawText = repair.rawText;
         reply = repair.reply;
+      } else if (replyLooksGarbled(reply, lang) || replyLooksWrongLanguage(reply, lang)) {
+        reply = isGreetingOnly(lastUser) ? getCannedGreeting(lang) : getQualityFallback(lang);
       }
+    }
+
+    if (reply && replyLooksGarbled(reply, lang)) {
+      reply = isGreetingOnly(lastUser) ? getCannedGreeting(lang) : getQualityFallback(lang);
     }
 
     if (!aiRes?.ok || !reply) {
