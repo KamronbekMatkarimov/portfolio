@@ -68,7 +68,7 @@ export const translations = {
       email: "Email",
       message: "Message",
       send: "Send",
-      sent: "Message sent to Gmail! 🎉",
+      sent: "Message sent! 🎉",
       error: "Could not send message. Try Telegram @matkarimovff.",
     },
     footer: {
@@ -152,7 +152,7 @@ export const translations = {
       email: "Email",
       message: "Сообщение",
       send: "Отправить",
-      sent: "Сообщение отправлено на почту! 🎉",
+      sent: "Сообщение отправлено! 🎉",
       error: "Не удалось отправить. Напишите в Telegram @matkarimovff.",
     },
     footer: {
@@ -236,7 +236,7 @@ export const translations = {
       email: "Email",
       message: "Xabar",
       send: "Yuborish",
-      sent: "Xabar Gmailga yuborildi! 🎉",
+      sent: "Xabar yuborildi! 🎉",
       error: "Yuborib bo'lmadi. Telegram @matkarimovff ga yozing.",
     },
     footer: {

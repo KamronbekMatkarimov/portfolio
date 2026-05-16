@@ -1,20 +1,42 @@
 .ui-toastHost {
   position: fixed;
   right: 16px;
-  bottom: 16px;
-  display: grid;
+  left: 16px;
+  bottom: calc(92px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   gap: 10px;
-  z-index: 60;
+  z-index: 105;
+  pointer-events: none;
+  max-width: none;
+}
+
+body[data-chat-open="true"] .ui-toastHost {
+  bottom: auto;
+  top: calc(76px + env(safe-area-inset-top));
 }
 
 .ui-toast {
+  pointer-events: auto;
+  max-width: min(380px, 100%);
   border-radius: 16px;
-  padding: 12px 14px;
+  padding: 14px 16px;
   color: var(--text-strong);
-  background: color-mix(in oklab, var(--surface), transparent 12%);
-  border: 1px solid color-mix(in oklab, var(--accent), transparent 70%);
-  box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(10px);
+  background: color-mix(in oklab, var(--surface), var(--bg) 18%);
+  border: 1px solid color-mix(in oklab, var(--accent), transparent 55%);
+  box-shadow: var(--shadow-soft), var(--shadow-glow);
+  backdrop-filter: blur(14px);
   animation: fadeUp 220ms ease both;
+  line-height: 1.45;
+  word-break: break-word;
+  text-align: left;
+}
+
+@media (min-width: 480px) {
+  .ui-toastHost {
+    left: auto;
+    width: min(380px, calc(100vw - 32px));
+  }
 }
 

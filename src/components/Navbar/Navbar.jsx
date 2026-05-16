@@ -58,6 +58,9 @@ export function Navbar({ t, lang, onLangChange, theme, onThemeChange }) {
 
         <div className="nav__controls">
           <div className="nav__group" role="group" aria-label="Language">
+            <span className="nav__groupLabel" aria-hidden="true">
+              Lang
+            </span>
             {LANGS.map((l) => (
               <button
                 key={l.id}
@@ -72,6 +75,9 @@ export function Navbar({ t, lang, onLangChange, theme, onThemeChange }) {
           </div>
 
           <div className="nav__group" role="group" aria-label="Theme">
+            <span className="nav__groupLabel" aria-hidden="true">
+              Theme
+            </span>
             {THEMES.map((th) => (
               <button
                 key={th.id}

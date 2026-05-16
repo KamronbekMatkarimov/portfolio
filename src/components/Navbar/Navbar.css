@@ -67,41 +67,51 @@
 }
 
 .nav__group {
-  display: flex;
-  gap: 4px;
+  display: inline-flex;
   align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--surface), transparent 20%);
+  box-shadow: var(--shadow-soft);
+}
+
+.nav__groupLabel {
+  display: none;
 }
 
 .nav__pill {
-  border: 1px solid var(--border);
-  border-radius: var(--r-pill);
-  background: color-mix(in oklab, var(--surface), transparent 35%);
+  border: 0;
+  border-radius: calc(var(--r-pill) - 4px);
+  background: transparent;
   color: var(--muted);
-  min-height: 36px;
-  min-width: 36px;
-  padding: 0 11px;
+  min-height: 32px;
+  min-width: 32px;
+  padding: 0 10px;
   cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+  transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
 }
 
 .nav__pill.is-active {
-  background: color-mix(in oklab, var(--accent), transparent 78%);
-  border-color: color-mix(in oklab, var(--accent), transparent 45%);
+  background: color-mix(in oklab, var(--accent), transparent 72%);
   color: var(--text-strong);
+  box-shadow: 0 1px 8px color-mix(in oklab, var(--accent), transparent 65%);
 }
 
 .nav__pill:focus-visible {
   outline: 2px solid color-mix(in oklab, var(--accent), transparent 35%);
-  outline-offset: 2px;
+  outline-offset: 1px;
 }
 
 .nav__pill--theme {
-  padding: 0 9px;
+  min-width: 30px;
+  padding: 0 8px;
 }
 
 .nav__pillShort {
@@ -117,9 +127,11 @@
     display: inline;
   }
 
-  .nav__pill--theme {
-    min-width: 32px;
-    padding: 0 8px;
+  .nav__pill {
+    min-height: 30px;
+    min-width: 28px;
+    padding: 0 7px;
+    font-size: 10px;
   }
 }
 
@@ -132,17 +144,45 @@
     display: flex;
   }
 
-  .nav__controls {
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
+  .nav__pill {
+    min-height: 34px;
+    min-width: 34px;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+
+  .nav__pill--theme {
+    padding: 0 10px;
   }
 }
 
 @media (min-width: 1024px) {
+  .nav__controls {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav__group {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 4px 4px 10px;
+  }
+
+  .nav__groupLabel {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
   .nav__pill {
-    min-height: 40px;
-    padding: 0 13px;
-    font-size: 13px;
+    min-height: 36px;
+    font-size: 12px;
   }
 }
