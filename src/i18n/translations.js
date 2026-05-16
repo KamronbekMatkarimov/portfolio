@@ -80,6 +80,8 @@ export const translations = {
       send: "Send",
       clear: "Clear",
       chips: ["What's your tech stack?", "Tell me about your projects", "How to contact Kamron?"],
+      greetingReply:
+        "Hello! I'm the AI assistant for Kamron Matkarimov's portfolio. Ask about his experience, projects, or how to reach him — Telegram & Instagram @matkarimovff.",
     },
   },
   ru: {
@@ -161,6 +163,8 @@ export const translations = {
       send: "Отправить",
       clear: "Очистить",
       chips: ["Какой стек используешь?", "Расскажи о проектах", "Как связаться с Камроном?"],
+      greetingReply:
+        "Здравствуйте! Я AI-ассистент портфолио Камрона Маткаримова. Спросите о его опыте, проектах или контактах — Telegram и Instagram: @matkarimovff.",
     },
   },
   uz: {
@@ -246,6 +250,8 @@ export const translations = {
         "Loyihalar haqida ayt",
         "Kamron bilan bog'lanish?",
       ],
+      greetingReply:
+        "Salom! Men Kamron Matkarimov portfelidagi AI yordamchiman. Savolingiz bo'lsa, yozing — tajribasi, loyihalari yoki aloqa haqida yordam beraman. Telegram va Instagram: @matkarimovff.",
     },
   },
 };

@@ -237,9 +237,16 @@ function pickLang(_bodyLang, messages) {
 const GREETING_ONLY =
   /^(salom|assalomu\s*alaykum|va\s*alaykum|rahmat|qalay|qaley|qanday|qandaysiz|yaxshimisiz|hayr|hello|hi|hey|привет|здравствуйте|здравствуй|добрый\s*(день|вечер|утро))[\s!.?]*$/i;
 
+function normalizeUserText(text) {
+  return String(text || "")
+    .trim()
+    .replace(/\uFEFF/g, "")
+    .replace(/\s+/g, " ");
+}
+
 function isGreetingOnly(text) {
-  const s = String(text || "").trim();
-  if (!s || s.length > 40) return false;
+  const s = normalizeUserText(text);
+  if (!s || s.length > 48) return false;
   return GREETING_ONLY.test(s);
 }
 
@@ -268,7 +275,10 @@ function getQualityFallback(lang) {
 }
 
 const UZ_GARBAGE =
-  /\b(bost|neqchiq|qizbandi|dakash|kabulatoyon|kabulatay|kulish|halse|yakadam|ochiq\s+kulish|qayyum|qaboolatoyon)\b/i;
+  /\b(bost|neqchiq|qizbandi|dakash|kabulatoyon|kabulatay|kulish|halse|yakadam|ochiq\s+kulish|qayyum|qaboolatoyon|qishloq|skalib|o'zimonaviy|kahve|o'rinida\s+o'qishdan)\b/i;
+
+const UZ_ENGLISH_DUMP =
+  /\b(self-taught|fullstack developer|production-ready|clean code|scalable architecture)\b/i;
 
 function replyLooksGarbled(reply, lang) {
   const r = String(reply || "").trim();
@@ -276,6 +286,8 @@ function replyLooksGarbled(reply, lang) {
 
   if (lang === "uz") {
     if (UZ_GARBAGE.test(r)) return true;
+    if (UZ_ENGLISH_DUMP.test(r)) return true;
+    if (r.length > 220) return true;
     const lines = r.split("\n").filter((l) => l.trim());
     if (lines.length >= 5 && lines.filter((l) => /^[A-Za-z' ]+:/.test(l.trim())).length >= 2) return true;
   }
@@ -515,7 +527,9 @@ export default async function handler(req, res) {
     if (messagesRaw.length > 20) return json(res, 429, { reply: "Too many messages." });
 
     const messages = toChatMessages(messagesRaw);
-    const lastUser = [...messages].reverse().find((m) => m.role === "user")?.content || "";
+    const lastUser = normalizeUserText(
+      [...messages].reverse().find((m) => m.role === "user")?.content || "",
+    );
     if (isLikelySpam(lastUser)) return json(res, 400, { reply: "Rejected (spam protection)" });
 
     const lang = pickLang(body?.lang, messages);

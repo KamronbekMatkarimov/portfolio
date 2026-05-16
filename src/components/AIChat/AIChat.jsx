@@ -4,6 +4,7 @@ import { Button } from "../ui/Button/Button";
 import { Card } from "../ui/Card/Card";
 import { Loader } from "../ui/Loader/Loader";
 import { MarkdownLite } from "../../utils/markdown";
+import { translations } from "../../i18n/translations";
 import { sendChat } from "../../utils/chat";
 
 const MAX_HISTORY = 20;
@@ -106,7 +107,12 @@ export default function AIChat({ t, lang }) {
     abortRef.current = ctrl;
 
     try {
-      const message = await sendChat({ messages: next, lang, signal: ctrl.signal });
+      const message = await sendChat({
+        messages: next,
+        lang,
+        signal: ctrl.signal,
+        translations,
+      });
       setHistory((prev) =>
         [...(Array.isArray(prev) ? prev : []), { role: "assistant", content: message }].slice(-MAX_HISTORY),
       );
