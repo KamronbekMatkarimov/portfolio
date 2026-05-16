@@ -18,7 +18,7 @@ const LINKS = [
     subtitle: "@matkarimovff",
     href: "https://www.instagram.com/matkarimovff/",
   },
-  { title: "Email", subtitle: "matkarimovkamron10@gmail.com", href: "mailto:matkarimovkamron10@gmail.com" },
+  { title: "Email", subtitle: "kamronmatkarimov1008@gmail.com", href: "mailto:kamronmatkarimov1008@gmail.com" },
 ];
 
 export function Contact({ t }) {

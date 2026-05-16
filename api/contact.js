@@ -2,9 +2,9 @@
  * Contact form → Gmail via SMTP (App Password).
  *
  * Vercel / .env:
- *   GMAIL_USER=matkarimovkamron10@gmail.com
+ *   GMAIL_USER=kamronmatkarimov1008@gmail.com
  *   GMAIL_APP_PASSWORD=xxxx xxxx xxxx xxxx  (Google App Password)
- *   CONTACT_TO=matkarimovkamron10@gmail.com  (optional, defaults to GMAIL_USER)
+ *   CONTACT_TO=kamronmatkarimov1008@gmail.com  (optional, defaults to GMAIL_USER)
  */
 import nodemailer from "nodemailer";
 
