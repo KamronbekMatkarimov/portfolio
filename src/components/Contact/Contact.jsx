@@ -24,7 +24,7 @@ const LINKS = [
 export function Contact({ t }) {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [form, setForm] = useState({ name: "", message: "" });
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -32,7 +32,7 @@ export function Contact({ t }) {
     setLoading(true);
     try {
       await sendContactForm(form);
-      setForm({ name: "", email: "", message: "" });
+      setForm({ name: "", message: "" });
       toast.push(t.contact.sent);
     } catch (err) {
       toast.push(err instanceof Error ? err.message : t.contact.error);
@@ -74,13 +74,6 @@ export function Contact({ t }) {
                 value={form.name}
                 onChange={(v) => setForm((p) => ({ ...p, name: v }))}
                 autoComplete="name"
-              />
-              <Field
-                label={t.contact.email}
-                type="email"
-                value={form.email}
-                onChange={(v) => setForm((p) => ({ ...p, email: v }))}
-                autoComplete="email"
               />
               <Field
                 label={t.contact.message}

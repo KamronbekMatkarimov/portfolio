@@ -45,10 +45,6 @@ function normalizeSecret(value) {
   return s;
 }
 
-function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
 function escapeHtml(s) {
   return String(s)
     .replace(/&/g, "&amp;")
@@ -57,7 +53,7 @@ function escapeHtml(s) {
     .replace(/"/g, "&quot;");
 }
 
-async function sendContactEmail({ name, email, message }) {
+async function sendContactEmail({ name, message }) {
   const user = normalizeSecret(process.env.GMAIL_USER);
   const pass = normalizeSecret(process.env.GMAIL_APP_PASSWORD);
   const to = normalizeSecret(process.env.CONTACT_TO) || user;
@@ -76,10 +72,9 @@ async function sendContactEmail({ name, email, message }) {
   });
 
   const subject = `Portfolio: message from ${name}`;
-  const text = `Name: ${name}\nEmail: ${email}\n\n${message}`;
+  const text = `Name: ${name}\n\n${message}`;
   const html = `
     <p><strong>Name:</strong> ${escapeHtml(name)}</p>
-    <p><strong>Email:</strong> <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></p>
     <hr />
     <p>${escapeHtml(message).replace(/\n/g, "<br />")}</p>
   `;
@@ -87,7 +82,6 @@ async function sendContactEmail({ name, email, message }) {
   await transporter.sendMail({
     from: `"Portfolio" <${user}>`,
     to,
-    replyTo: email,
     subject,
     text,
     html,
@@ -114,17 +108,13 @@ export default async function handler(req, res) {
   try {
     const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
     const name = String(body?.name || "").trim().slice(0, 120);
-    const email = String(body?.email || "").trim().slice(0, 160);
     const message = String(body?.message || "").trim().slice(0, 4000);
 
-    if (!name || !email || !message) {
-      return json(res, 400, { ok: false, error: "Fill in all fields." });
-    }
-    if (!isValidEmail(email)) {
-      return json(res, 400, { ok: false, error: "Invalid email address." });
+    if (!name || !message) {
+      return json(res, 400, { ok: false, error: "Fill in name and message." });
     }
 
-    await sendContactEmail({ name, email, message });
+    await sendContactEmail({ name, message });
     return json(res, 200, { ok: true });
   } catch (e) {
     if (e?.code === "NOT_CONFIGURED") {

@@ -1,8 +1,8 @@
-export async function sendContactForm({ name, email, message }) {
+export async function sendContactForm({ name, message }) {
   const res = await fetch("/api/contact", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, message }),
+    body: JSON.stringify({ name, message }),
   });
 
   let data = {};
