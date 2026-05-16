@@ -3,6 +3,12 @@ import { resolve } from "node:path";
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import chatHandler from "./api/chat.js";
+import contactHandler from "./api/contact.js";
+
+const API_ROUTES = {
+  "/api/chat": chatHandler,
+  "/api/contact": contactHandler,
+};
 
 /** .env must win over stale API keys in Windows user/system environment. */
 function applyEnvFiles(mode) {
@@ -33,13 +39,14 @@ function applyEnvFiles(mode) {
  * Vite dev server does not run Vercel serverless routes.
  * This middleware mirrors POST /api/chat so local development works like production.
  */
-function chatApiDevPlugin() {
+function apiDevPlugin() {
   return {
-    name: "chat-api-dev",
+    name: "api-dev",
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {
         const url = req.url?.split("?")[0] ?? "";
-        if (url !== "/api/chat") return next();
+        const handler = API_ROUTES[url];
+        if (!handler) return next();
 
         if (req.method === "OPTIONS") {
           res.statusCode = 204;
@@ -51,7 +58,7 @@ function chatApiDevPlugin() {
           res.statusCode = 405;
           res.setHeader("Allow", "POST");
           res.setHeader("Content-Type", "application/json; charset=utf-8");
-          res.end(JSON.stringify({ reply: "Method not allowed" }));
+          res.end(JSON.stringify({ ok: false, error: "Method not allowed" }));
           return;
         }
 
@@ -65,19 +72,19 @@ function chatApiDevPlugin() {
         } catch {
           res.statusCode = 400;
           res.setHeader("Content-Type", "application/json; charset=utf-8");
-          res.end(JSON.stringify({ reply: "Invalid request." }));
+          res.end(JSON.stringify({ ok: false, error: "Invalid request." }));
           return;
         }
 
         const augmentedReq = Object.assign(req, { body });
 
         try {
-          await chatHandler(augmentedReq, res);
+          await handler(augmentedReq, res);
         } catch {
           if (!res.writableEnded) {
             res.statusCode = 500;
             res.setHeader("Content-Type", "application/json; charset=utf-8");
-            res.end(JSON.stringify({ reply: "AI service error." }));
+            res.end(JSON.stringify({ ok: false, error: "Server error." }));
           }
         }
       });
@@ -94,6 +101,6 @@ export default defineConfig(({ mode }) => {
   applyEnvFiles(mode);
 
   return {
-    plugins: [react(), chatApiDevPlugin()],
+    plugins: [react(), apiDevPlugin()],
   };
 });

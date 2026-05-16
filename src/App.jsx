@@ -34,7 +34,13 @@ export default function App() {
   const t = useMemo(() => translations[normalizeLang(lang)], [lang]);
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", normalizeTheme(theme));
+    const t = normalizeTheme(theme);
+    document.documentElement.setAttribute("data-theme", t);
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      const colors = { dark: "#08080f", light: "#f4f3ee", ocean: "#050d1a", forest: "#070f07" };
+      meta.setAttribute("content", colors[t] || colors.dark);
+    }
   }, [theme]);
 
   useEffect(() => {

@@ -39,7 +39,7 @@
 }
 
 .contact__arrow {
-  color: color-mix(in oklab, var(--accent), white 10%);
+  color: color-mix(in oklab, var(--accent), var(--mix-target) 10%);
 }
 
 @media (hover: hover) and (pointer: fine) {

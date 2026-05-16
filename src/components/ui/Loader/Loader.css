@@ -9,7 +9,7 @@
   width: 8px;
   height: 8px;
   border-radius: 99px;
-  background: color-mix(in oklab, var(--accent), white 10%);
+  background: color-mix(in oklab, var(--accent), var(--mix-target) 10%);
   animation: floatSoft 900ms ease-in-out infinite;
 }
 
@@ -26,7 +26,7 @@
   background: linear-gradient(
     90deg,
     color-mix(in oklab, var(--surface), transparent 35%),
-    color-mix(in oklab, var(--surface), white 8%),
+    color-mix(in oklab, var(--surface), var(--mix-target) 8%),
     color-mix(in oklab, var(--surface), transparent 35%)
   );
   background-size: 200% 100%;

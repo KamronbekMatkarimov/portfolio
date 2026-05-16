@@ -9,7 +9,7 @@
   min-height: 56px;
   padding: 10px 18px 10px 14px;
   border-radius: var(--r-pill);
-  border: 2px solid color-mix(in oklab, var(--accent), white 12%);
+  border: 2px solid color-mix(in oklab, var(--accent), var(--mix-target) 12%);
   background: linear-gradient(
     135deg,
     color-mix(in oklab, var(--accent), var(--bg) 25%),

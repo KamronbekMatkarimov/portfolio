@@ -68,7 +68,8 @@ export const translations = {
       email: "Email",
       message: "Message",
       send: "Send",
-      sent: "Message sent! 🎉",
+      sent: "Message sent to Gmail! 🎉",
+      error: "Could not send message. Try Telegram @matkarimovff.",
     },
     footer: {
       built: "Built with ❤️ by Kamron Matkarimov",
@@ -151,7 +152,8 @@ export const translations = {
       email: "Email",
       message: "Сообщение",
       send: "Отправить",
-      sent: "Сообщение отправлено! 🎉",
+      sent: "Сообщение отправлено на почту! 🎉",
+      error: "Не удалось отправить. Напишите в Telegram @matkarimovff.",
     },
     footer: {
       built: "Сделано с ❤️ — Kamron Matkarimov",
@@ -234,7 +236,8 @@ export const translations = {
       email: "Email",
       message: "Xabar",
       send: "Yuborish",
-      sent: "Xabar yuborildi! 🎉",
+      sent: "Xabar Gmailga yuborildi! 🎉",
+      error: "Yuborib bo'lmadi. Telegram @matkarimovff ga yozing.",
     },
     footer: {
       built: "❤️ bilan qurildi — Kamron Matkarimov",

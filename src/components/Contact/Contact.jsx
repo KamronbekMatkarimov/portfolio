@@ -4,6 +4,7 @@ import { SectionHeader } from "../ui/SectionHeader/SectionHeader";
 import { Card } from "../ui/Card/Card";
 import { Button } from "../ui/Button/Button";
 import { useToast } from "../ui/Toast/ToastContext";
+import { sendContactForm } from "../../utils/contact";
 
 const LINKS = [
   {
@@ -29,11 +30,15 @@ export function Contact({ t }) {
     e.preventDefault();
     if (loading) return;
     setLoading(true);
-    window.setTimeout(() => {
-      setLoading(false);
+    try {
+      await sendContactForm(form);
       setForm({ name: "", email: "", message: "" });
       toast.push(t.contact.sent);
-    }, 450);
+    } catch (err) {
+      toast.push(err instanceof Error ? err.message : t.contact.error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

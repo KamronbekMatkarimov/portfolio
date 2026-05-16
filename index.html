@@ -32,6 +32,18 @@
     />
   </head>
   <body>
+    <script>
+      (function () {
+        try {
+          var raw = localStorage.getItem("km_theme");
+          if (!raw) return;
+          var theme = JSON.parse(raw);
+          if (theme === "dark" || theme === "light" || theme === "ocean" || theme === "forest") {
+            document.documentElement.setAttribute("data-theme", theme);
+          }
+        } catch (e) {}
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

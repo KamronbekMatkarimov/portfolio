@@ -1,0 +1,101 @@
+/* Full token set per theme — text colors must be defined on every theme */
+
+html[data-theme="dark"],
+html:not([data-theme]) {
+  --bg: #08080f;
+  --surface: #0f0f1a;
+  --accent: #c9a84c;
+  --text: rgba(255, 255, 255, 0.86);
+  --text-strong: #ffffff;
+  --muted: rgba(255, 255, 255, 0.64);
+  --border: rgba(255, 255, 255, 0.12);
+  --shadow-soft: 0 12px 40px rgba(0, 0, 0, 0.35);
+  --shadow-glow: 0 0 0 1px rgba(201, 168, 76, 0.18), 0 18px 60px rgba(201, 168, 76, 0.08);
+  --mix-target: #ffffff;
+  --overlay-a: rgba(255, 255, 255, 0.06);
+  --overlay-b: rgba(255, 255, 255, 0.04);
+  --grid-line: rgba(255, 255, 255, 0.55);
+  --hero-orb-shine: rgba(255, 255, 255, 0.14);
+  --meta-theme: #08080f;
+  color-scheme: dark;
+}
+
+html[data-theme="light"] {
+  --bg: #f4f3ee;
+  --surface: #ffffff;
+  --accent: #9a7b0a;
+  --text: #2a2a30;
+  --text-strong: #121216;
+  --muted: #5c5c66;
+  --border: rgba(18, 18, 24, 0.14);
+  --shadow-soft: 0 12px 40px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 0 1px rgba(154, 123, 10, 0.22), 0 18px 60px rgba(154, 123, 10, 0.08);
+  --mix-target: #000000;
+  --overlay-a: rgba(0, 0, 0, 0.04);
+  --overlay-b: rgba(0, 0, 0, 0.03);
+  --grid-line: rgba(0, 0, 0, 0.1);
+  --hero-orb-shine: rgba(0, 0, 0, 0.05);
+  --meta-theme: #f4f3ee;
+  color-scheme: light;
+}
+
+html[data-theme="ocean"] {
+  --bg: #050d1a;
+  --surface: #0a1628;
+  --accent: #00d4ff;
+  --text: rgba(220, 245, 255, 0.88);
+  --text-strong: #f0fbff;
+  --muted: rgba(180, 220, 240, 0.72);
+  --border: rgba(0, 212, 255, 0.18);
+  --shadow-soft: 0 12px 40px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 0 1px rgba(0, 212, 255, 0.22), 0 18px 60px rgba(0, 212, 255, 0.1);
+  --mix-target: #ffffff;
+  --overlay-a: rgba(0, 212, 255, 0.06);
+  --overlay-b: rgba(0, 120, 180, 0.08);
+  --grid-line: rgba(0, 212, 255, 0.35);
+  --hero-orb-shine: rgba(0, 212, 255, 0.12);
+  --meta-theme: #050d1a;
+  color-scheme: dark;
+}
+
+html[data-theme="forest"] {
+  --bg: #070f07;
+  --surface: #0f1a0f;
+  --accent: #4ade80;
+  --text: rgba(230, 255, 235, 0.88);
+  --text-strong: #f2fff5;
+  --muted: rgba(180, 220, 190, 0.72);
+  --border: rgba(74, 222, 128, 0.18);
+  --shadow-soft: 0 12px 40px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 0 1px rgba(74, 222, 128, 0.22), 0 18px 60px rgba(74, 222, 128, 0.1);
+  --mix-target: #ffffff;
+  --overlay-a: rgba(74, 222, 128, 0.06);
+  --overlay-b: rgba(40, 120, 60, 0.08);
+  --grid-line: rgba(74, 222, 128, 0.3);
+  --hero-orb-shine: rgba(180, 255, 200, 0.1);
+  --meta-theme: #070f07;
+  color-scheme: dark;
+}
+
+html[data-theme="light"] .ui-card {
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+}
+
+html[data-theme="light"] .ui-button--ghost {
+  background: color-mix(in oklab, var(--surface), var(--border) 40%);
+  color: var(--text-strong);
+}
+
+html[data-theme="light"] .ui-button--primary {
+  color: var(--text-strong);
+}
+
+html[data-theme="light"] body::before {
+  opacity: 0.55;
+}
+
+html[data-theme="light"] body::after {
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+}
